@@ -11,6 +11,6 @@ public class ScanBeanProxy<T> implements InvocationHandler, Serializable {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		System.out.println("hello i am proxy");
-		return null;
+		return "----proxy-----";
 	}
 }

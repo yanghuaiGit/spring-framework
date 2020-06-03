@@ -48,6 +48,7 @@ public class BeanRegister implements ImportBeanDefinitionRegistrar, ResourceLoad
 
 		AnnotationTypeFilter annotationTypeFilter = new AnnotationTypeFilter(
 				CanScan.class);
+		// 只扫描带有自定义注解的类
 		scanner.addIncludeFilter(annotationTypeFilter);
 
 		Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(packages);

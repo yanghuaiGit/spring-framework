@@ -2,30 +2,26 @@ package org.springframework.ioc;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.ioc.annotation.BeanScan;
 import org.springframework.ioc.domain.ProxyTestInterface;
 import org.springframework.ioc.domain.User;
 
-
+@Configuration
 @BeanScan(packages = "org.springframework.ioc.domain")
 public class BeanLifeCycle {
 
 
-	@Bean
+	@Bean(name = "User")
 	public User user() {
-		return new User("yh", 199L);
+		return  User.createUser();
 	}
 
 
 	public static void main(String[] args) {
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanLifeCycle.class);
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("org.springframework.ioc");
 
-		User us = context.getBean(User.class);
-		System.out.println(us.toString());
-
-		ProxyTestInterface proxyTestInterface = context.getBean(ProxyTestInterface.class);
-		proxyTestInterface.test();
-
-
+		ProxyTestInterface us = context.getBean(ProxyTestInterface.class);
+		us.test();
 	}
 }
