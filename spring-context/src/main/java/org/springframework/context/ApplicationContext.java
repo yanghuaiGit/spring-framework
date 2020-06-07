@@ -26,7 +26,7 @@ import org.springframework.lang.Nullable;
 /**
  * Central interface to provide configuration for an application.
  * This is read-only while the application is running, but may be
- * reloaded if the implementation supports this.
+ * reloaded if the implem¬entation supports this.
  *
  * <p>An ApplicationContext provides:
  * <ul>

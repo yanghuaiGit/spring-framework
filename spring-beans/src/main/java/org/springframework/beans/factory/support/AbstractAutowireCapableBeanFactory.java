@@ -171,6 +171,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	public AbstractAutowireCapableBeanFactory() {
 		super();
+		//忽略自动注入接口依赖 不会注入到接口了
 		ignoreDependencyInterface(BeanNameAware.class);
 		ignoreDependencyInterface(BeanFactoryAware.class);
 		ignoreDependencyInterface(BeanClassLoaderAware.class);
@@ -226,6 +227,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * <p>Note that circular reference resolution means that one of the involved beans
 	 * will receive a reference to another bean that is not fully initialized yet.
 	 * This can lead to subtle and not-so-subtle side effects on initialization;
+	 * 这个可能导致在初始化的时候出现一些微妙的变化
 	 * it does work fine for many scenarios, though.
 	 * <p>Default is "true". Turn this off to throw an exception when encountering
 	 * a circular reference, disallowing them completely.
@@ -484,6 +486,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Make sure bean class is actually resolved at this point, and
 		// clone the bean definition in case of a dynamically resolved Class
 		// which cannot be stored in the shared merged bean definition.
+		//beandefinition 是不能被修改的 要保证线程安全 其他的地方也要用到这个 beandefinition 因此在这儿重新加载一份出来
 		Class<?> resolvedClass = resolveBeanClass(mbd, beanName);
 		if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
 			mbdToUse = new RootBeanDefinition(mbd);
@@ -501,6 +504,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			//调用 InstantiationAwareBeanPostProcessor的回调 InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation 仍然是BeanPostProcessor的子接口
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -1176,6 +1180,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				return autowireConstructor(beanName, mbd, null, null);
 			}
 			else {
+				//使用构造器 反射生成对象 wrapper也在这里使用到
 				return instantiateBean(beanName, mbd);
 			}
 		}

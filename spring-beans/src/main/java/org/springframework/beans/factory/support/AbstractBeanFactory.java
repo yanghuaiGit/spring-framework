@@ -109,6 +109,10 @@ import org.springframework.util.StringValueResolver;
  * @see AbstractAutowireCapableBeanFactory#createBean
  * @see DefaultListableBeanFactory#getBeanDefinition
  */
+
+/**
+ * 注册单例bean
+ */
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
 	/** Parent bean factory, for bean inheritance support. */
@@ -243,8 +247,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		//手动注入的bean 在SingletonBeanRegistry#registerSingleton可以进行注入，在BeanFactoryPostProcessor.postProcessBeanFactory时可以被触发注入bean
 		Object sharedInstance = getSingleton(beanName);
-		if (sharedInstance != null && args == null) {
+		if (sharedInstance != null && args ==    null) {
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
 					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +

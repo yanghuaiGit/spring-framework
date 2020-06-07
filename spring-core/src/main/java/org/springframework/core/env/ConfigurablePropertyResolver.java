@@ -28,6 +28,11 @@ import org.springframework.lang.Nullable;
  * @author Chris Beams
  * @since 3.1
  */
+
+/**
+ * 可配置的属性解析器
+ * 将一直值转换为另一个值 ConversionService
+ */
 public interface ConfigurablePropertyResolver extends PropertyResolver {
 
 	/**
