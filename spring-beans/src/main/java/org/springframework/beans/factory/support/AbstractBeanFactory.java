@@ -248,6 +248,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 		// Eagerly check singleton cache for manually registered singletons.
 		//手动注入的bean 在SingletonBeanRegistry#registerSingleton可以进行注入，在BeanFactoryPostProcessor.postProcessBeanFactory时可以被触发注入bean
+		//一般是获取不到的 要进行初始化
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args ==    null) {
 			if (logger.isTraceEnabled()) {
@@ -270,8 +271,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			// Check if bean definition exists in this factory.
+			//从父类处获取 肯定也是获取不到的
 			BeanFactory parentBeanFactory = getParentBeanFactory();
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
+				//如果找不到就一直循环从父类去查找
 				// Not found -> check parent.
 				String nameToLookup = originalBeanName(name);
 				if (parentBeanFactory instanceof AbstractBeanFactory) {
@@ -290,16 +293,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					return (T) parentBeanFactory.getBean(nameToLookup);
 				}
 			}
+			//打上正在创建标记（这样做的目的是在我创建这个bean之前就先打上创建标记，告诉其它来创建的线程，避免了重复创建，那么这个方法内部肯定是同步的
 
 			if (!typeCheckOnly) {
 				markBeanAsCreated(beanName);
 			}
-
+			//获取到该bean对应的BeanDefinition，
 			try {
 				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
+				//把当前初始化bean所依赖的bean进行初始化
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
@@ -318,7 +323,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 				}
 
-				// Create bean instance.
+				// Create bean instance. 根据bean的scope进行创建
 				if (mbd.isSingleton()) {
 					sharedInstance = getSingleton(beanName, () -> {
 						try {

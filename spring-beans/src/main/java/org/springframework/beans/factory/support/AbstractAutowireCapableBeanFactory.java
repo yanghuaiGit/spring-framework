@@ -568,6 +568,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
+					//MergedBeanDefinitionPostProcessor.postProcessMergedBeanDefinition
+					//autowired的注入解析就在这里回调到
+					//todo 这儿应该是调用了 org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessMergedBeanDefinition 进行解析吧
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				}
 				catch (Throwable ex) {
@@ -593,7 +596,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
+			//todo 这儿应该是调用了 org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessMergedBeanDefinition 进行解析吧
 			populateBean(beanName, mbd, instanceWrapper);
+			//在这里对bean进行实例化 BeanPostProcessor的回调也在这里
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -1771,6 +1776,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		Object wrappedBean = bean;
+		//org.springframework.beans.factory.config.BeanPostProcessor.postProcessBeforeInitialization 回调
 		if (mbd == null || !mbd.isSynthetic()) {
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
@@ -1783,6 +1789,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					(mbd != null ? mbd.getResourceDescription() : null),
 					beanName, "Invocation of init method failed", ex);
 		}
+		//BeanPostProcessor.postProcessAfterInitialization 回调
 		if (mbd == null || !mbd.isSynthetic()) {
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
@@ -1838,6 +1845,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					throw pae.getException();
 				}
 			}
+			//InitializingBean 回调
 			else {
 				((InitializingBean) bean).afterPropertiesSet();
 			}

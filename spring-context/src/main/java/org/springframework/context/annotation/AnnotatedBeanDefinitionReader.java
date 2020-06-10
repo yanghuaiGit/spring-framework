@@ -67,6 +67,7 @@ public class AnnotatedBeanDefinitionReader {
 	 * @see #AnnotatedBeanDefinitionReader(BeanDefinitionRegistry, Environment)
 	 * @see #setEnvironment(Environment)
 	 */
+	//读取注解的Bean读取器
 	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this(registry, getOrCreateEnvironment(registry));
 	}
@@ -214,7 +215,7 @@ public class AnnotatedBeanDefinitionReader {
 	 */
 	<T> void doRegisterBean(Class<T> beanClass, @Nullable Supplier<T> instanceSupplier, @Nullable String name,
 			@Nullable Class<? extends Annotation>[] qualifiers, BeanDefinitionCustomizer... definitionCustomizers) {
-
+		// 先把此实体类型转换为一个BeanDefinition
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;

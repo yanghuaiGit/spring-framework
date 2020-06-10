@@ -550,13 +550,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
 				//允许子类对beanfactory增加一些东西 AbstractRefreshableWebApplicationContext web容器实现类就增加了 servlet上下文
-				//一般是外部的容器添加一些bean 不会再下面的方法 invokeBeanFactoryPostProcessors 中添加processBeanFactory 是因为下面的方法是调用
-				//在下面的回调方法里添加是无法进行回调的
-				//在这里加入 BeanPostProcessor
+				//一般是外部的容器添加一些bean
+				//在这里加入 BeanPostProcessor  eanFactoryPostProcessors( 主要是web环境进行添加的
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
 				//实例化并且调用所有的 BeanFactoryPostProcessor
+				//已经把 BeanFactoryPostProcessors 初始化了，使用 BeanFactoryPostProcessor 加一些bean就没用了 不会被调用了
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -572,10 +572,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				onRefresh();
 
 				// Check for listener beans and register them.
+				//为上面初始化的监听器添加监听者
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				//实例化所有的保留的sigletons bean
+				//实例化所有非懒加载的单例类
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -679,7 +680,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
+		//这儿添加了各个aware接口的回调
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+		//这儿就忽略这些aware接口的依赖
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -911,6 +914,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
+		//主要是这儿进行初始化
 		beanFactory.preInstantiateSingletons();
 	}
 

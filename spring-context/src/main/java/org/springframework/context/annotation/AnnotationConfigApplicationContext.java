@@ -61,9 +61,14 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	/**
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
+	 * 加载Bean定义信息BeanDefinition 这两个类很重要
 	 */
+	//AnnotatedBeanDefinitionReader是一个读取注解的Bean读取器，这里将this传了进去。
 	public AnnotationConfigApplicationContext() {
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+		//这个类是扫描路径下的所有类 进行注入  但是这个是在
+		//AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("org.springframework.ioc");
+		//传入的是string  而不是class  只有在这个时候 这个类才会进行调用
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -85,6 +90,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		this();
+		//配置类注册进来
 		register(componentClasses);
 		refresh();
 	}

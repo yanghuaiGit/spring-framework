@@ -91,7 +91,7 @@ final class PostProcessorRegistrationDelegate {
 			//进行排序
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
-			//回调
+			//回调 好像是在这儿进行回调 读取到包下的beandefinition
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			//清空
 			currentRegistryProcessors.clear();
@@ -186,6 +186,25 @@ final class PostProcessorRegistrationDelegate {
 		beanFactory.clearMetadataCache();
 	}
 
+	/**
+	 * todo  这儿有个疑问 在注册的时候分为 priorityOrderedPostProcessors orderedPostProcessorNames nonOrderedPostProcessorNames 可以理解
+	 *todo 但是 internalPostProcessors 会添加 MergedBeanDefinitionPostProcessor 类型的beanpostprocessor，然后在注册
+	 * todo 那么为什么不这么写呢
+	 * 				BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
+	 * 				priorityOrderedPostProcessors.add(pp);
+	 * 				if (pp instanceof MergedBeanDefinitionPostProcessor) {
+	 * 					internalPostProcessors.add(pp);
+	 *                                }
+	 *                      改为
+	 *             BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
+	 * 				if (pp instanceof MergedBeanDefinitionPostProcessor) {
+	 * 					internalPostProcessors.add(pp);
+	 *                                }else{
+	 *                                    priorityOrderedPostProcessors.add(pp);
+	 *                                }
+	 * @param beanFactory
+	 * @param applicationContext
+	 */
 	public static void registerBeanPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
