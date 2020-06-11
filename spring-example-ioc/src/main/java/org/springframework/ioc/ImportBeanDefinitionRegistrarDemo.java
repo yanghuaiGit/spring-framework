@@ -2,7 +2,6 @@ package org.springframework.ioc;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ioc.annotation.BeanScan;
 import org.springframework.ioc.domain.ProxyTestInterface;
 import org.springframework.ioc.domain.User;
@@ -11,7 +10,7 @@ import org.springframework.ioc.domain.User;
 public class ImportBeanDefinitionRegistrarDemo {
 
 	@Bean
-	public User user(){
+	public User user() {
 		return User.createUser();
 	}
 

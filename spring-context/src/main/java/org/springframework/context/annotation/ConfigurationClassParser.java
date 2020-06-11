@@ -254,10 +254,14 @@ class ConfigurationClassParser {
 	 * @param sourceClass a source class
 	 * @return the superclass, or {@code null} if none found or previously processed
 	 */
+	// Process any @Import annotations
+    // 处理Import注解注册的bean，这一步只会将import注册的bean变为ConfigurationClass,不会变成BeanDefinition
+	// 而是在loadBeanDefinitions()方法中变成BeanDefinition，再放入到BeanDefinitionMap中
 	@Nullable
 	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass)
 			throws IOException {
 
+		//解析 Component 类以及派生类 如 @configuration
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
 			// Recursively process any member (nested) classes first
 			processMemberClasses(configClass, sourceClass);
@@ -299,6 +303,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @Import annotations
+		//解析@Import类
 		processImports(configClass, sourceClass, getImports(sourceClass), true);
 
 		// Process any @ImportResource annotations
@@ -557,14 +562,21 @@ class ConfigurationClassParser {
 						// Candidate class is an ImportSelector -> delegate to it to determine imports
 						Class<?> candidateClass = candidate.loadClass();
 						ImportSelector selector = BeanUtils.instantiateClass(candidateClass, ImportSelector.class);
+						//加入这个class 有aware接口 需要进行回调注入
 						ParserStrategyUtils.invokeAwareMethods(
 								selector, this.environment, this.resourceLoader, this.registry);
+						//DeferredImportSelector需要进行特殊处理
+						//需要等地configuration类解析完 再进行 DeferredImportSelector 回调了
 						if (selector instanceof DeferredImportSelector) {
 							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector);
 						}
 						else {
+							// 返回值是一个字符串数组，数组元素为类的全类名，然后把全类名变为SourceClass
+							// 为什么要变为SourceClass呢？因为在此处解析时，Spring是通过SourceClass来解析类的
 							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
 							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames);
+						// 递归调用processImports,为什么要递归调用该方法？
+						// 因为上面返回的全类名所表示的类可能是ImportSelector或者ImportBeanDefinitionRegistrar
 							processImports(configClass, currentSourceClass, importSourceClasses, false);
 						}
 					}
@@ -581,6 +593,9 @@ class ConfigurationClassParser {
 					else {
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
 						// process it as an @Configuration class
+						// 处理通过Import注解导入的普通类
+						// 这里只需要直接调用processConfigurationClass()方法即可，把RegularBean当做一个配置类去解析
+						// 因为RegularBean这个类型可能加了@ConponentScan，@Bean等注解
 						this.importStack.registerImport(
 								currentSourceClass.getMetadata(), candidate.getMetadata().getClassName());
 						processConfigurationClass(candidate.asConfigClass(configClass));
