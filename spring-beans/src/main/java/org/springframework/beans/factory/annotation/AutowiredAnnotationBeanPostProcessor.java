@@ -225,6 +225,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
 	}
 
+	/**
+	 * 在创建bean的时候用到了 进行@autowire的注入
+	 * @param beanDefinition the merged bean definition for the bean
+	 * @param beanType the actual type of the managed bean instance
+	 * @param beanName the name of the bean
+	 */
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
@@ -368,6 +374,10 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		}
 		return (candidateConstructors.length > 0 ? candidateConstructors : null);
 	}
+//	在AbstractAutowireCapableBeanFactory的
+//
+//	doCreateBean（）方法里，有一个populateBean（）里面调用了postProcessPropertyValues（）。从方法名称上，我们知道创建Bean(doCreateBean)>填充Bean(populateBean)。在这个populateBean()里回调
+
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {

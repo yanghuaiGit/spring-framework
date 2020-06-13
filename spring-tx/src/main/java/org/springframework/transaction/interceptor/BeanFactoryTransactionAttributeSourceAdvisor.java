@@ -32,11 +32,13 @@ import org.springframework.lang.Nullable;
  * @see TransactionAttributeSourceAdvisor
  */
 @SuppressWarnings("serial")
+//实现的是PointcutAdvisor接口，既可以设置Advice，又可以设置Pointcut。
 public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFactoryPointcutAdvisor {
 
 	@Nullable
 	private TransactionAttributeSource transactionAttributeSource;
-
+	//pointcut 是TransactionAttributeSourcePointcut 的子类，实现了TransactionAttributeSource 方法。
+	//该方法的作用，是用户可以配置`解析器`。
 	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
 		@Override
 		@Nullable

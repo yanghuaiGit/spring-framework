@@ -428,6 +428,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				if (resource.isReadable()) {
 					try {
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
+						//判断是否能被扫描注入
 						if (isCandidateComponent(metadataReader)) {
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setResource(resource);
@@ -493,7 +494,10 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				return false;
 			}
 		}
+		//这个方法其实就是判断是否是@componnent
+		// org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider.registerDefaultFilters
 		for (TypeFilter tf : this.includeFilters) {
+			//如果符合了过滤条件 是可以进行注入 这时候在判断是否允许注入beandefinition  因为@condition条件注解存在的话 还要判断条件是否成立
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				return isConditionMatch(metadataReader);
 			}

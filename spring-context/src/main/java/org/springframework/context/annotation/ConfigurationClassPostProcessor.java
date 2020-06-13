@@ -250,6 +250,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			processConfigBeanDefinitions((BeanDefinitionRegistry) beanFactory);
 		}
 
+		//@configuration类的增强
 		enhanceConfigurationClasses(beanFactory);
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
@@ -268,12 +269,19 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			 * {@link org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors(org.springframework.beans.factory.support.BeanDefinitionRegistry)}
 			 */
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+			// checkConfigurationClassCandidate()会判断一个是否是一个配置类,并为BeanDefinition设置属性为lite或者full。
+			// 在这儿为BeanDefinition设置lite和full属性值是为了后面在使用
+			// 如果加了@Configuration，那么对应的BeanDefinition为full;
+			// 如果加了@Bean,@Component,@ComponentScan,@Import,@ImportResource这些注解，则为lite。
+			//lite和full均表示这个BeanDefinition对应的类是一个配置类
 			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef) ||
 					ConfigurationClassUtils.isLiteConfigurationClass(beanDef)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
 			}
+			//该方法是用来判断一个是否是一个配置类，并为BeanDefinition设置属性为lite或者full。如果加了@Configuration，那么对应的BeanDefinition为full，如果加了@Bean，@Component，@ComponentScan，@Import，@ImportResource这些注解，则为lite。lite和full均表示这个BeanDefinition对应的类是一个配置类。
+
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				//内置的一些bean此时不会加进去
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
@@ -297,6 +305,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		if (registry instanceof SingletonBeanRegistry) {
 			sbr = (SingletonBeanRegistry) registry;
 			if (!this.localBeanNameGeneratorSet) {
+				// beanName的生成器，因为后面会扫描出所有加入到spring容器中calss类，然后把这些class
+				// 解析成BeanDefinition类，此时需要利用BeanNameGenerator为这些BeanDefinition生成beanName
 				BeanNameGenerator generator = (BeanNameGenerator) sbr.getSingleton(CONFIGURATION_BEAN_NAME_GENERATOR);
 				if (generator != null) {
 					this.componentScanBeanNameGenerator = generator;
@@ -343,6 +353,11 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 			candidates.clear();
 			//代表上面 reader.loadBeanDefinitions(configClasses); 又读到了beandefinition
+			//new AnnotationConfigApplicationContext 的时候会注入一些内置beandefinition 以及配置类 即AnnotationConfigApplicationContext的参数
+			/**这个时候会注入一些beandefinition
+			 * {@link org.springframework.context.annotation.AnnotationConfigUtils.registerAnnotationConfigProcessors(org.springframework.beans.factory.support.BeanDefinitionRegistry)}
+			 */
+			//就是上面第一次加载beandefinition 只是把我们的beandefinition进行解析了，此时spring容器自己的 beandefinition还没有进行解析
 			if (registry.getBeanDefinitionCount() > candidateNames.length) {
 				String[] newCandidateNames = registry.getBeanDefinitionNames();
 				Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));

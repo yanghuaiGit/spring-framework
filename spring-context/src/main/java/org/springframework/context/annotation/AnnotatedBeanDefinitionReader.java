@@ -217,6 +217,8 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable Class<? extends Annotation>[] qualifiers, BeanDefinitionCustomizer... definitionCustomizers) {
 		// 先把此实体类型转换为一个BeanDefinition
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
+		//判断@conditional是否生效 如果满足了 就不注入
+		//大体逻辑 必须有@Configuration修饰。然后解析一些Condition注解，看是否排除
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
