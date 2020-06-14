@@ -39,10 +39,12 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 
 	@Bean(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE) //声明的role为基础类（Spring内部使用的类）
+	//这个是切面 增强和切入点管理 内部有pointcut
 	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor() {
 		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
+		//这个就是pointcut
 		advisor.setTransactionAttributeSource(transactionAttributeSource());
-		//配置Advice
+		//配置Advice 增强
 		advisor.setAdvice(transactionInterceptor());
 		if (this.enableTx != null) {
 			advisor.setOrder(this.enableTx.<Integer>getNumber("order"));
@@ -50,12 +52,14 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 		return advisor;
 	}
 
+	//这个就是pointcut
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionAttributeSource transactionAttributeSource() {
 		return new AnnotationTransactionAttributeSource();
 	}
 
+	//这个就是增强
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionInterceptor transactionInterceptor() {
