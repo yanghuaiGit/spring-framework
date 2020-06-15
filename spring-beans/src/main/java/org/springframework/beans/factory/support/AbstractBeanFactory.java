@@ -300,6 +300,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 			//获取到该bean对应的BeanDefinition，
 			try {
+				//获取到rootbeandefinition
 				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
 
@@ -1578,6 +1579,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * Mark the specified bean as already created (or about to be created).
 	 * <p>This allows the bean factory to optimize its caching for repeated
 	 * creation of the specified bean.
+	 * 给这个bean标记 已经创建完或正在创建
 	 * @param beanName the name of the bean
 	 */
 	protected void markBeanAsCreated(String beanName) {

@@ -69,7 +69,7 @@ import java.util.stream.Stream;
  * @author Phillip Webb
  * @author Stephane Nicoll
  * @see #registerBeanDefinition
- * @see #addBeanPostProcessor
+ * @see #addBeanPostProcessora
  * @see #getBean
  * @see #resolveDependency
  * @since 16 April 2001
@@ -879,6 +879,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
 		if (existingDefinition != null) {
+			//是否允许覆盖
 			if (!isAllowBeanDefinitionOverriding()) {
 				throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
 			} else if (existingDefinition.getRole() < beanDefinition.getRole()) {
