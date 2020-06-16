@@ -275,6 +275,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			processKeyedProperty(tokens, pv);
 		}
 		else {
+			//属性赋值失败
 			processLocalProperty(tokens, pv);
 		}
 	}

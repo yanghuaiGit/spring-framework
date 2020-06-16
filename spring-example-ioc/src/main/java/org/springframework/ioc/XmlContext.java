@@ -45,6 +45,22 @@ public class XmlContext {
 	 * beandefinitionHolder 主要包含 beanname 以及 beandefinition
 	 * registry进行注册 beandefinitionHolder
 	 *调用bean解析完毕的触发动作，从而触发相应的listener的动作
+	 *
+	 *
+	 *
+	 * SpringBean的创建流程
+	 * Spring所管理的Bean实际上是缓存在一个concurrentHahmap中 singletonObjects
+	 * key是bean 的name(id) value是object
+	 * 在创建bean之前，首先需要将该bean的创建标识指定好，标明已经或即将创建，目的是增加缓存效率
+	 * 根据bean的scope属性，来确定当前bean是一个singleton还是propertype的bean
+	 * 这两者创建过程是一致的，不同的是singleton的创建完之后有一个finally操作放入缓存中
+	 * 通过java反射机制来创建bean的实例 在创建之前需要检查构造方法的访问修饰符，如果不是public 则会调用setaccessible(true)
+	 * 当对象创建完毕之后，开始进行对象属性的注入
+	 * 在对象属性注入的过程中 spring除去使用之前的beandefinition获取bean的相关信息外，还会通过反射获取到获取到bean中的真实属性信息
+	 * 完成bean属性的注入或者抛出异常(propertyMathes)
+	 *如果bean是一个单利的，那么将所创建的bean添加到缓存中
+	 *
+	 *
 	 */
 	public static void main(String[] args) {
 
