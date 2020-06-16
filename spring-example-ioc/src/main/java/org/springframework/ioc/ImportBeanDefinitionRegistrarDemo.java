@@ -21,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Configuration
 public class ImportBeanDefinitionRegistrarDemo {
 
+	/**
+	 * PlatformTransactionManager 由一个父类统一管理各个不同的事务
+	 * @return
+	 */
 	@Bean
 	public PlatformTransactionManager platformTransactionManager(){
 		return new PlatformTransactionManager() {
