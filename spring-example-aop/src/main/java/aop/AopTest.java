@@ -8,6 +8,14 @@ import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * 通过 proxyFactoryBean 配置相应的代理对象的信息
+ * 在获取 proxyFactoryBean 实例时 本质上获取到的是 proxyFactoryBean#getObject返回的对象实例
+ * 在整个proxyFactoryBean 实例的构建与缓存的过程中 其流程和普通的bean对象是一致的
+ * 当创建的 proxyFactoryBean 对象后 spring会创建当前对象是否是一个factoryBean实例 是的话 就会调用getObject 返回这个对象
+ * 如果是 spring会进入到一个新的流程之中
+ * proxyFactoryBean 根据配置的信息 进行动态代理 使用cglib jdk等方式进行代理
+ */
 
 public class AopTest {
 
