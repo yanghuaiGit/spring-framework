@@ -8,6 +8,11 @@
         http://www.springframework.org/schema/context
         https://www.springframework.org/schema/context/spring-context.xsd">
 
+	<!-- 注解生效 注入 ConfigurationClassPostProcessor 等注解 调用的是
+     DefaultBeanDefinitionDocumentReader#parseBeanDefinitions 调用到
+    	org.springframework.context.annotation.AnnotationConfigUtils#registerAnnotationConfigProcessors -->
+	<context:annotation-config></context:annotation-config>
+
 	<!-- Root BeanDefinition 不需要合并，不存在 parent -->
 	<!-- 普通 beanDefinition GenericBeanDefinition -->
 	<!-- 经过合并后 GenericBeanDefinition 变成 RootBeanDefinition -->
@@ -26,6 +31,6 @@
 	</bean>
 
 
-	<context:annotation-config></context:annotation-config>
+
 
 </beans>

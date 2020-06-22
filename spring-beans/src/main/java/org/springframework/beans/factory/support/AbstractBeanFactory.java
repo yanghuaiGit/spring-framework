@@ -243,6 +243,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
 
+		//转换bean的名字为符合要求的名字
 		final String beanName = transformedBeanName(name);
 		Object bean;
 
@@ -260,6 +261,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
+			//这儿是因为如果是factorybean 需要返回的是factory里的那个bean
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
@@ -315,6 +317,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						}
 						registerDependentBean(dep, beanName);
 						try {
+							//如果bean依赖有其它bean 就会进行这个 getbean操作 如设置了 RuntimeBeanReference
 							getBean(dep);
 						}
 						catch (NoSuchBeanDefinitionException ex) {

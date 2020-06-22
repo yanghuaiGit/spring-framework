@@ -91,7 +91,8 @@ final class PostProcessorRegistrationDelegate {
 			//进行排序
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
-			//回调 好像是在这儿进行回调 读取到包下的beandefinition
+			//回调 好像是在这儿进行回调 读取到包下的beandefinition  就是在这儿哦
+			//org.springframework.context.annotation.ConfigurationClassPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			//清空
 			currentRegistryProcessors.clear();

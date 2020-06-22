@@ -1,12 +1,10 @@
 package org.springframework.ioc;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ioc.annotation.BeanScan;
-import org.springframework.ioc.domain.ProxyTestInterface;
 import org.springframework.ioc.domain.User;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -15,18 +13,32 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+
 //@BeanScan(packages = "org.springframework.ioc.domain")
 @EnableTransactionManagement
 //@EnableCaching
 @Configuration
+@ComponentScan //默认会扫描同包以及子包下的类
 public class ImportBeanDefinitionRegistrarDemo {
+
+	@Autowired
+	private User user;
+
+	@Autowired
+	private ImportBeanDefinitionRegistrarDemo ImportBeanDefinitionRegistrarDemo;
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	/**
 	 * PlatformTransactionManager 由一个父类统一管理各个不同的事务
+	 *
 	 * @return
 	 */
 	@Bean
-	public PlatformTransactionManager platformTransactionManager(){
+	public PlatformTransactionManager platformTransactionManager() {
 		return new PlatformTransactionManager() {
 			@Override
 			public TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException {
@@ -44,14 +56,11 @@ public class ImportBeanDefinitionRegistrarDemo {
 			}
 		};
 	}
-	@Bean
-	@Transactional
-	public User user() {
-		return User.createUser();
-	}
 
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ImportBeanDefinitionRegistrarDemo.class);
+
+		ImportBeanDefinitionRegistrarDemo importBeanDefinitionRegistrarDemo = context.getBean(ImportBeanDefinitionRegistrarDemo.class);
 
 //		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("org.springframework.ioc");
 //		ProxyTestInterface proxyTestInterface = context.getBean(ProxyTestInterface.class);

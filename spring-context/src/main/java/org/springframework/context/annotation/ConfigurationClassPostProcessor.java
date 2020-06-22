@@ -348,6 +348,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			//这儿是spring读取资源 比如@configuratio里的@bean等等 @import里的beandefinition 都会被注册到beanfactory里去
 
 		    // 将上一步parser解析出的ConfigurationClass类加载成BeanDefinition
+			//如果解析到了代理信息 就会调用 org.springframework.context.annotation.AutoProxyRegistrar.registerBeanDefinitions 注册 InfrastructureAdvisorAutoProxyCreator 进行动态代理
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 

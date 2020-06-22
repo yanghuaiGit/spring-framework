@@ -523,7 +523,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			//在这儿进行的bean的实例化
+			//在这儿进行的bean的实例化 如果构造函数有需要注入的对象 也会在这儿实例化
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		final Object bean = instanceWrapper.getWrappedInstance();
@@ -536,6 +536,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
+					//todo 这儿应该是调用了 org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessMergedBeanDefinition 进行解析吧
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				} catch (Throwable ex) {
 					throw new BeanCreationException(mbd.getResourceDescription(), beanName,
@@ -557,12 +558,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
-
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
 			//初始化bean实例  对字段进行赋值等
-			//todo 这儿应该是调用了 org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessMergedBeanDefinition 进行解析吧
+			//todo 这儿应该是调用了 org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties 进行解析吧
 			populateBean(beanName, mbd, instanceWrapper);
 			// BeanPostProcessor的回调也在这里 initmethod等等
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
@@ -1126,6 +1126,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (instanceSupplier != null) {
 			return obtainFromSupplier(instanceSupplier, beanName);
 		}
+
+		//如果是@configuration里的@bean 是在这里进行处理
+		// mbd.getFactoryMethodName()获取到的是@configuration注解类的名字
 
 		if (mbd.getFactoryMethodName() != null) {
 			return instantiateUsingFactoryMethod(beanName, mbd, args);

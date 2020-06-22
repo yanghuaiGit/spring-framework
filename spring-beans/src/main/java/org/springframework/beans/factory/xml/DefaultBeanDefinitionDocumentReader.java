@@ -177,6 +177,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						//<context:annotation-config></context:annotation-config> xml如果有这行 就会对@configuration @import 等起作用进行解析
+						//最终调用到 AnnotationConfigUtils.registerAnnotationConfigProcessors
 						delegate.parseCustomElement(ele);
 					}
 				}
