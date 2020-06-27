@@ -52,7 +52,7 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 		return advisor;
 	}
 
-	//这个就是pointcut
+	//这个就是pointcut 所需要的解析器 切点根据 TransactionAttributeSource 获取到@transaction的信息 对其进行切点的判断
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionAttributeSource transactionAttributeSource() {

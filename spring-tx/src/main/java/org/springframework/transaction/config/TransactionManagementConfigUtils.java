@@ -68,7 +68,7 @@ public abstract class TransactionManagementConfigUtils {
 	 * @since 5.1
 	 */
 	public static final String JTA_TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME =
-			"org.springframework.transaction.aspectj.AspectJJtaTransactionManagementConfiguration";
+			"org.springframework.transaction.aspectj.AspectJJtaTransactionManagementConfigurationAspectJJtaTransactionManagementConfiguration";
 
 	/**
 	 * The bean name of the internally managed TransactionalEventListenerFactory.

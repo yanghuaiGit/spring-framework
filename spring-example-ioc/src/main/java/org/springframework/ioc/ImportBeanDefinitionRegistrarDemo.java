@@ -11,9 +11,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 //@BeanScan(packages = "org.springframework.ioc.domain")
 @EnableTransactionManagement
@@ -22,15 +19,20 @@ import javax.annotation.Resource;
 @ComponentScan //默认会扫描同包以及子包下的类
 public class ImportBeanDefinitionRegistrarDemo {
 
-	@Autowired
-	private User user;
+//	@Autowired
+//	private User user;
 
-	@Autowired
-	private ImportBeanDefinitionRegistrarDemo ImportBeanDefinitionRegistrarDemo;
+//	@Autowired
+//	public ImportBeanDefinitionRegistrarDemo(User user){
+//		this.user = user;
+//	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+//	@Autowired
+//	private ImportBeanDefinitionRegistrarDemo ImportBeanDefinitionRegistrarDemo;
+
+//	public void setUser(User user) {
+//		this.user = user;
+//	}
 
 	/**
 	 * PlatformTransactionManager 由一个父类统一管理各个不同的事务
