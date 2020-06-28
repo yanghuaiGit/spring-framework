@@ -558,6 +558,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				//实例化并且调用所有的 BeanFactoryPostProcessor
 				//已经把 BeanFactoryPostProcessors 初始化了，使用 BeanFactoryPostProcessor 加一些bean就没用了 不会被调用了
 				//@configuration里的一些@bean 就是在这里解析到 加入到beandefinitionMap里去
+				//扫描包 注册所有的beandefinition
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
@@ -570,6 +571,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				//springboot中 tomcat的创建以及启动就是在这个方法里的
 				onRefresh();
 
 				// Check for listener beans and register them.

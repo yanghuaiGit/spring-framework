@@ -474,7 +474,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			//调用 InstantiationAwareBeanPostProcessor的回调 InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation 仍然是BeanPostProcessor的子接口
-			//这儿可以生成代理类    transaction的代理类就是这里
+			//这儿可以生成代理类    transaction的代理类就是这里 如果代理类已经实例化好了
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -1745,12 +1745,21 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				return null;
 			}, getAccessControlContext());
 		} else {
+			//aware接口的调用
+			// BeanNameAware
+			//BeanClassLoaderAware
+			//BeanFactoryAware
 			invokeAwareMethods(beanName, bean);
+
 		}
 
 		Object wrappedBean = bean;
 		//org.springframework.beans.factory.config.BeanPostProcessor.postProcessBeforeInitialization 回调
 		if (mbd == null || !mbd.isSynthetic()) {
+
+			//CommonAnnotationBeanPostProcessor 这个是@postconstruct的调用地方
+			//Bean××Aware都是在代码中直接调用的，而ApplicationContext相关的Aware都是通过BeanPostProcessor#postProcessBeforeInitialization()实现的
+			//org.springframework.context.support.ApplicationContextAwareProcessor.postProcessBeforeInitialization
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
@@ -1823,6 +1832,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		//init-method 的调用
 		if (mbd != null && bean.getClass() != NullBean.class) {
 			String initMethodName = mbd.getInitMethodName();
 			if (StringUtils.hasLength(initMethodName) &&
