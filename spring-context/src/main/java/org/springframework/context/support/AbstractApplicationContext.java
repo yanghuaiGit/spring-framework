@@ -551,7 +551,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Allows post-processing of the bean factory in context subclasses.
 				//允许子类对beanfactory增加一些东西 AbstractRefreshableWebApplicationContext web容器实现类就增加了 servlet上下文
 				//一般是外部的容器添加一些bean
-				//在这里加入 BeanPostProcessor  eanFactoryPostProcessors( 主要是web环境进行添加的
+				//在这里加入 BeanPostProcessor  beanFactoryPostProcessors( 主要是web环境进行添加的
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
