@@ -213,6 +213,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+				//每次创建一个bean的时候 都会放进去 当循环依赖 a创建放进去 b依赖a 这时再放进去 就会报错了 这是因为进入这个方法代表在early里没找到
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -245,6 +246,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					}
 					afterSingletonCreation(beanName);
 				}
+				//单利bean的注册
 				//添加到缓存里去
 				if (newSingleton) {
 					addSingleton(beanName, singletonObject);
@@ -336,6 +338,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the singleton about to be created
 	 * @see #isSingletonCurrentlyInCreation
 	 */
+	//如果是构造器注入 那么循环依赖的时候  这边就会报错了
+	//a创建 插入进去 b创建需要a a到这步就会报错了 抛出循环依赖的异常
+	//因为到这步 是说明在三级缓存没找到需要创建
+	//如果是 setter注入 b依赖a 会在三级缓存里找到 就不会走到这步了
 	protected void beforeSingletonCreation(String beanName) {
 		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
 			throw new BeanCurrentlyInCreationException(beanName);

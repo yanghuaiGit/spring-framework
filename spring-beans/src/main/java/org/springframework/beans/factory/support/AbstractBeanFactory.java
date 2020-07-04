@@ -249,7 +249,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 		// Eagerly check singleton cache for manually registered singletons.
 		//手动注入的bean 在SingletonBeanRegistry#registerSingleton可以进行注入，在BeanFactoryPostProcessor.postProcessBeanFactory时可以被触发注入bean
-		//一般是获取不到的 要进行初始化
+		//一般是获取不到的 要进行初始化  循依赖是找的到的
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args ==    null) {
 			if (logger.isTraceEnabled()) {
@@ -268,6 +268,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
+			//这儿是非单例的循环依赖检测 直接报错
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
@@ -296,7 +297,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 			}
 			//打上正在创建标记（这样做的目的是在我创建这个bean之前就先打上创建标记，告诉其它来创建的线程，避免了重复创建，那么这个方法内部肯定是同步的
-
+			//后面单例循环依赖也需要这个
 			if (!typeCheckOnly) {
 				markBeanAsCreated(beanName);
 			}
@@ -1626,6 +1627,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param beanName the name of the bean
 	 * @return {@code true} if actually removed, {@code false} otherwise
 	 */
+	//alreadyCreated 是bean创建了 就会添加进去 所以如果不包含就说明这个bean没有创建
+	//不会删除的 只有创建bean失败了 才会删除 也就是说正常情况获取到了 就代表已经创建了原始对象
 	protected boolean removeSingletonIfCreatedForTypeCheckOnly(String beanName) {
 		if (!this.alreadyCreated.contains(beanName)) {
 			removeSingleton(beanName);

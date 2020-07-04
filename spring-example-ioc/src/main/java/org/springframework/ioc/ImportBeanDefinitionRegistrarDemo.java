@@ -12,6 +12,10 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 //@BeanScan(packages = "org.springframework.ioc.domain")
 @EnableTransactionManagement
 //@EnableCaching
@@ -19,13 +23,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan //默认会扫描同包以及子包下的类
 public class ImportBeanDefinitionRegistrarDemo {
 
-//	@Autowired
-//	private User user;
+	@Autowired
+	private User user;
 
 //	@Autowired
-//	public ImportBeanDefinitionRegistrarDemo(User user){
-//		this.user = user;
-//	}
+	public ImportBeanDefinitionRegistrarDemo(User user){
+		this.user = user;
+	}
 
 //	@Autowired
 //	private ImportBeanDefinitionRegistrarDemo ImportBeanDefinitionRegistrarDemo;
